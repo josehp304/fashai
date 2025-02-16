@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import AskAi from './askAi';
 
 export default function Page() {
   let [aiMessage, setAiMessage] = useState("");
@@ -14,33 +15,12 @@ export default function Page() {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setIsDarkMode(darkModeMediaQuery.matches);
+
   }, [aiMessage]);
 
-  async function askAi(mess) {
-    const data = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.NEXT_PUBLIC_OPEN_ROUTER_API}`,
-        // "HTTP-Referer": "", // Optional. Site URL for rankings on openrouter.ai.
-        // "X-Title": "<YOUR_SITE_NAME>", // Optional. Site title for rankings on openrouter.ai.
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        "model": "deepseek/deepseek-r1-distill-llama-70b:free",
-        "messages": [
-          {
-            role: "user",
-            content:`${mess}` 
-          }
-        ]
-      })
-    });
-    const response = await data.json();
-    console.log("message",response);
-
-    return response.choices[0].message.content;
-  }
-
+ 
   return (
     <div className={`flex flex-col items-center justify-center min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} font-sans`}>
       <button 
@@ -66,7 +46,8 @@ export default function Page() {
               className="self-end px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-300" 
               onClick={async (e) => {
                 setAiResponse("loading...");
-                setAiResponse(await askAi(aiMessage));
+                setAiResponse(await AskAi(aiMessage));
+                setAiMessage("")
                 console.log('clicked');
               }}
             >
