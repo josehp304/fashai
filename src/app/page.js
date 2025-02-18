@@ -6,16 +6,19 @@ import AskAi from './askAi';
 import { Popover,PopoverAnchor,PopoverContent,PopoverTrigger } from "@/components/ui/popover";
 import { Command,CommandDialog,CommandEmpty,CommandGroup,CommandInput,CommandItem,CommandList,CommandSeparator } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-
+import { Check, ChevronsUpDown } from "lucide-react";
 export default function Page() {
   let [aiMessage, setAiMessage] = useState("");
-  let [aiResponse, setAiResponse] = useState("waiting for ai response");
+  let [aiResponse, setAiResponse] = useState();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [model, setModel] = useState("meta-llama/llama-3.3-70b-instruct:free");
   const [popOpen, setPopOpen] = useState(false);
   const textareaRef = useRef(null);
 
-  const models = [ {id:"meta-llama/llama-3.3-70b-instruct:free",label:"llama-3.3-70b"},{id:"deepseek/deepseek-r1:free",label:"deepseek-r1"},{id:"google/gemini-2.0-flash-exp:free",label:"gemini-2.0-flash-exp"},{id:"mistralai/mistral-nemo:free",label:"mistral-nemo"}]
+  const models = [ {id:"meta-llama/llama-3.3-70b-instruct:free",label:"Llama-3.3-70b"},
+    {id:"deepseek/deepseek-r1:free",label:"Deepseek-r1"},{id:"google/gemini-2.0-flash-exp:free",label:"Gemini-2.0-flash-exp"},
+    {id:"mistralai/mistral-nemo:free",label:"Mistral-nemo"},{id:"openchat/openchat-7b:free",label:"Openchat-7b (lowest latency)"},
+    {id:"deepseek/deepseek-chat:free",label:"Deepseek V3"},{id:"google/gemini-2.0-flash-thinking-exp:free",label:"Gemini-2.0-flash (thinking exp)"}]
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -29,7 +32,7 @@ export default function Page() {
 
  
   return (
-    <div className={`flex flex-col items-center justify-center min-h-screen pt-[50vh] ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} font-sans`}>
+    <div className={`flex flex-col items-center justify-center min-h-screen  ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} font-sans`}>
       <button 
         className="absolute top-4 right-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-300"
         onClick={() => setIsDarkMode(!isDarkMode)}
@@ -72,6 +75,7 @@ export default function Page() {
               {
                 models.find((m)=>m.id==model)?.label
                 }
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
                 </Button>
                 </PopoverTrigger>
               <PopoverContent>
@@ -93,8 +97,8 @@ export default function Page() {
               </PopoverContent>
             </Popover>
           <div className="mt-6">
-            <h2 className="text-2xl font-semibold mb-3">AI Response</h2>
-            <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'}`}>
+            <h2 className={`text-2xl font-semibold mb-3 ${aiResponse?"":"hidden"}`}  >AI Response</h2>
+            <div className={`p-4 rounded-lg ${aiResponse?"":"hidden"} ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'}`}>
               <Markdown remarkPlugins={[remarkGfm]}>{aiResponse}</Markdown>
             </div>
           </div>

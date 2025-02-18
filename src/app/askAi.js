@@ -13,7 +13,7 @@ export default async function AskAi(mess,model) {
         "model": `${model}`,
         "messages": [
           {
-            role: "user",
+            role:"user",
             content:`${mess}` 
           }
         ]
@@ -29,6 +29,6 @@ export default async function AskAi(mess,model) {
     return response.choices[0].message.content;
 
   }catch(error){
-    return ("sorry there was an error loading your result")
+    return ("sorry there was an error loading your result. Try a different model")
   }
       }
