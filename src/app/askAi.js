@@ -1,5 +1,6 @@
 "use server"
-export default async function AskAi(mess) {
+export default async function AskAi(mess,model) {
+  try{
     const data = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -9,7 +10,7 @@ export default async function AskAi(mess) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        "model": "deepseek/deepseek-r1-distill-llama-70b:free",
+        "model": `${model}`,
         "messages": [
           {
             role: "user",
@@ -18,8 +19,16 @@ export default async function AskAi(mess) {
         ]
       })
     });
+    if(!data.ok){
+      throw new Error("There was an error fetching the data")
+    }
     const response = await data.json();
     console.log("message",response);
 
+
     return response.choices[0].message.content;
+
+  }catch(error){
+    return ("sorry there was an error loading your result")
   }
+      }
