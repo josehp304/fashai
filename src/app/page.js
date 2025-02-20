@@ -10,6 +10,7 @@ import { Check, ChevronsUpDown } from "lucide-react";
 export default function Page() {
   let [aiMessage, setAiMessage] = useState("");
   let [aiResponse, setAiResponse] = useState();
+  let [chatLog,setChatLog] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [model, setModel] = useState("meta-llama/llama-3.3-70b-instruct:free");
   const [popOpen, setPopOpen] = useState(false);
@@ -32,7 +33,7 @@ export default function Page() {
 
  
   return (
-    <div className={`flex flex-col items-center justify-center min-h-screen  ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} font-sans`}>
+    <div className={`flex flex-col items-center justify-center min-h-screen overflow-hidden ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} font-sans`}>
       <button 
         className="absolute top-4 right-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-300"
         onClick={() => setIsDarkMode(!isDarkMode)}
@@ -57,8 +58,10 @@ export default function Page() {
               type='button'  
               className="w-full sm:w-auto self-end  px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-300 " 
               onClick={async (e) => {
+                setChatLog((prevChats)=>[...prevChats,{role:"user",content:aiMessage}])
                 setAiResponse("loading...");
-                setAiResponse(await AskAi(aiMessage,model));
+                setAiResponse(await AskAi([...chatLog,{role:"user",content:aiMessage}],model));
+                setChatLog((prevChats)=>[...prevChats,{role:"assistant",content:aiResponse}])
                 setAiMessage("")
                 console.log('clicked');
               }}
