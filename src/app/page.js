@@ -41,7 +41,7 @@ export default function Page() {
         Toggle {isDarkMode ? 'Light' : 'Dark'} Mode
       </button>
 
-      <h1 className="text-4xl font-bold mb-8">Polyadi GPT</h1>
+      <h1 className="text-4xl font-bold mb-8">Skibidy GPT</h1>
       <section className={`w-full max-w-2xl ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} rounded-lg shadow-lg p-6`}>
         <div className="flex flex-col">
           <form className="flex flex-col sm:flex-row  gap-2 item-center space-y-4  ">
