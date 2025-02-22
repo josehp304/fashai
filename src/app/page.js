@@ -12,7 +12,7 @@ export default function Page() {
   let [aiResponse, setAiResponse] = useState();
   let [chatLog,setChatLog] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [model, setModel] = useState("meta-llama/llama-3.3-70b-instruct:free");
+  const [model, setModel] = useState("openchat/openchat-7b:free");
   const [popOpen, setPopOpen] = useState(false);
   const textareaRef = useRef(null);
 
@@ -33,7 +33,7 @@ export default function Page() {
 
  
   return (
-    <div className={`flex flex-col items-center justify-center min-h-screen overflow-hidden ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} font-sans`}>
+    <div className={`flex  flex-col items-center justify-center  min-h-screen overflow-hidden ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} font-sans`}>
       <button 
         className="absolute top-4 right-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-300"
         onClick={() => setIsDarkMode(!isDarkMode)}
@@ -41,10 +41,25 @@ export default function Page() {
         Toggle {isDarkMode ? 'Light' : 'Dark'} Mode
       </button>
 
-      <h1 className="text-4xl font-bold mb-8">Skibidy GPT</h1>
-      <section className={`w-full max-w-2xl ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} rounded-lg shadow-lg p-6`}>
-        <div className="flex flex-col">
-          <form className="flex flex-col sm:flex-row  gap-2 item-center space-y-4  ">
+      <h1 className={`absolute top-0 left-20 mt-10 text-4xl  font-bold mb-8 ${chatLog.length?'hidden':''}`}>Skibidy GPT</h1>
+      <section className={`w-full max-w-6xl mb-10 mt-auto  ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} rounded-lg shadow-lg p-6`}>
+        <div className="flex flex-col  ">
+        <div className="mt-6">
+
+            <h2 className={`text-2xl font-semibold mb-3 ${aiResponse?"":"hidden"}`}  >AI Response</h2>
+            {
+              chatLog.map((chat,index)=>{
+                return(
+                  <div key={index} className={`flex flex-col gap-2 pt-5 ${chat.role=="user"?"items-end":"items-start"}`}>
+                    <div className={`p-4 rounded-lg ${chat.role=="user"?"bg-blue-500 text-white":"bg-gray-300 text-gray-900"}`}>{chat.content}</div>
+                  </div>
+                )
+              }
+            )
+            }
+            
+          </div>
+          <form className="relative flex flex-col items-center justify-center sm:flex-row h-full  gap-2   space-y-4">
             <textarea 
               ref={textareaRef}
               className={`w-full p-4 border ${isDarkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-white text-gray-900'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-hidden`} 
@@ -56,7 +71,7 @@ export default function Page() {
        
             <button 
               type='button'  
-              className="w-full sm:w-auto self-end  px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-300 " 
+              className="w-full sm:absolute right-2   sm:w-auto   px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-300 " 
               onClick={async (e) => {
                 setChatLog((prevChats)=>[...prevChats,{role:"user",content:aiMessage}])
                 setAiResponse("loading...");
@@ -72,7 +87,7 @@ export default function Page() {
             
           </form>
           <div></div>
-          <Popover className="w-full" open={popOpen} onOpenChange={setPopOpen}>
+          <Popover  open={popOpen} onOpenChange={setPopOpen}>
               <PopoverTrigger  asChild>
                 <Button >
               {
@@ -99,12 +114,7 @@ export default function Page() {
                 </Command>
               </PopoverContent>
             </Popover>
-          <div className="mt-6">
-            <h2 className={`text-2xl font-semibold mb-3 ${aiResponse?"":"hidden"}`}  >AI Response</h2>
-            <div className={`p-4 rounded-lg ${aiResponse?"":"hidden"} ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'}`}>
-              <Markdown remarkPlugins={[remarkGfm]}>{aiResponse}</Markdown>
-            </div>
-          </div>
+          
         </div>
       </section>
     </div>
