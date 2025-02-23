@@ -25,11 +25,20 @@ export default function Page() {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+
     }
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     setIsDarkMode(darkModeMediaQuery.matches);
 
   }, [aiMessage]);
+  const handleSubmit = async () => {
+    setChatLog((prevChats)=>[...prevChats,{role:"user",content:aiMessage}])
+    setAiResponse("loading...");
+    setAiResponse(await AskAi([...chatLog,{role:"user",content:aiMessage}],model));
+    setChatLog((prevChats)=>[...prevChats,{role:"assistant",content:aiResponse}])
+    setAiMessage("")
+    console.log('clicked');
+  }
 
  
   return (
@@ -64,6 +73,12 @@ export default function Page() {
               ref={textareaRef}
               className={`w-full p-4 border ${isDarkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-white text-gray-900'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-hidden`} 
               onChange={(e) => setAiMessage(e.target.value)}  
+              onKeyDown={(e) => {if(e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit();
+
+              }
+            }}
               placeholder="Type your message here"
               value={aiMessage}
             />
@@ -72,13 +87,8 @@ export default function Page() {
             <button 
               type='button'  
               className="w-full sm:absolute right-2   sm:w-auto   px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-300 " 
-              onClick={async (e) => {
-                setChatLog((prevChats)=>[...prevChats,{role:"user",content:aiMessage}])
-                setAiResponse("loading...");
-                setAiResponse(await AskAi([...chatLog,{role:"user",content:aiMessage}],model));
-                setChatLog((prevChats)=>[...prevChats,{role:"assistant",content:aiResponse}])
-                setAiMessage("")
-                console.log('clicked');
+              onClick={async () => {
+                handleSubmit();
               }}
             >
               Send
