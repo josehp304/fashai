@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
 export default function Page() {
   let [aiMessage, setAiMessage] = useState("");
-  let [aiResponse, setAiResponse] = useState();
+
   let [chatLog,setChatLog] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [model, setModel] = useState("openchat/openchat-7b:free");
@@ -32,12 +32,12 @@ export default function Page() {
 
   }, [aiMessage]);
   const handleSubmit = async () => {
-    setChatLog((prevChats)=>[...prevChats,{role:"user",content:aiMessage}])
-    setAiResponse("loading...");
+    const chatSave = [...chatLog]
+    setChatLog([...chatSave,{role:"user",content:aiMessage},{role:"assistant",content:"loading..."}])
     const re=await AskAi([...chatLog,{role:"user",content:aiMessage}],model);
-    setAiResponse(re);
-    const log = [...chatLog,{role:"user",content:aiMessage},{role:"assistant",content:re}]
-    console.log(aiResponse)
+    
+    const log = [...chatSave,{role:"user",content:aiMessage},{role:"assistant",content:re}]
+    
     setChatLog(log)
     setAiMessage("")
     console.log('clicked');
@@ -54,16 +54,17 @@ export default function Page() {
       </button>
 
       <h1 className={`absolute top-0 left-20 mt-10 text-4xl  font-bold mb-8 ${chatLog.length?'hidden':''}`}>Skibidy GPT</h1>
-      <section className={`w-full max-w-6xl mb-10 mt-auto  ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} rounded-lg shadow-lg p-6`}>
+ 
+      <section className={`w-full max-w-6xl  mt-auto  ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} rounded-lg shadow-lg p-6`}>
         <div className="flex flex-col  ">
         <div className="mt-6">
 
-            <h2 className={`text-2xl font-semibold mb-3 ${aiResponse?"":"hidden"}`}  >AI Response</h2>
+           
             {
               chatLog.map((chat,index)=>{
                 return(
                   <div key={index} className={`flex flex-col gap-2 pt-5 ${chat.role=="user"?"items-end":"items-start"}`}>
-                    <div className={`p-4 rounded-lg ${chat.role=="user"?"bg-blue-500 text-white":"bg-gray-300 text-gray-900"}`}>{chat.content}</div>
+                    <div className={`p-4 rounded-lg ${chat.role=="user"?"bg-blue-500 text-white":"bg-gray-400 text-gray-900"}`}>{chat.content}</div>
                   </div>
                 )
               }
@@ -71,7 +72,7 @@ export default function Page() {
             }
             
           </div>
-          <form className="relative flex flex-col items-center justify-center sm:flex-row h-full  gap-2   space-y-4">
+          <form className="relative flex flex-col items-center justify-center sm:flex-row h-full  gap-2   space-y-4 mt-5">
             <textarea 
               ref={textareaRef}
               className={`w-full p-4 border ${isDarkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-white text-gray-900'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-hidden`} 
