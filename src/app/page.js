@@ -34,8 +34,11 @@ export default function Page() {
   const handleSubmit = async () => {
     setChatLog((prevChats)=>[...prevChats,{role:"user",content:aiMessage}])
     setAiResponse("loading...");
-    setAiResponse(await AskAi([...chatLog,{role:"user",content:aiMessage}],model));
-    setChatLog((prevChats)=>[...prevChats,{role:"assistant",content:aiResponse}])
+    const re=await AskAi([...chatLog,{role:"user",content:aiMessage}],model);
+    setAiResponse(re);
+    const log = [...chatLog,{role:"user",content:aiMessage},{role:"assistant",content:re}]
+    console.log(aiResponse)
+    setChatLog(log)
     setAiMessage("")
     console.log('clicked');
   }
